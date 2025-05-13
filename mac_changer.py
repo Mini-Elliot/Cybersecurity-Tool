@@ -4,33 +4,27 @@ import argparse
 import os
 import sys
 
-
+#terminal argument parser
 def get_arguments():
     parser = argparse.ArgumentParser()
-    parser.add_argument("-i", "--interface", dest="interface",
-                        help="Network interface to change its MAC address")
-    parser.add_argument("-m", "--mac-address", dest="new_mac",
-                        help="New MAC address to assign to the interface")
+    parser.add_argument("-i", "--interface", dest="interface", help="Network interface to change its MAC address")
+    parser.add_argument("-m", "--mac-address", dest="new_mac", help="New MAC address to assign to the interface")
     args = parser.parse_args()
     if not args.interface:
-        parser.error(
-            "[-] Please specify a network interface. Use --interface or -i. (e.g., eth0, wlan0)")
+        parser.error("[-] Please specify a network interface. Use --interface or -i. (e.g., eth0, wlan0)")
     elif not args.new_mac:
-        parser.error(
-            "[-] Please provide a new MAC address. Use --mac-address or -m. (e.g., 00:11:22:33:44:55)")
-
+        parser.error("[-] Please provide a new MAC address. Use --mac-address or -m. (e.g., 00:11:22:33:44:55)")
     return args
 
-
+#mac address changing function
 def mac_changer(interface, new_mac):
     print(f"[+] Chaning MAC address for {interface} to {new_mac}")
 
     subprocess.call(["ifconfig", interface, "down"])
-    subprocess.call(["ifconfig", interface, "hw",
-                    "ether", new_mac])
+    subprocess.call(["ifconfig", interface, "hw", "ether", new_mac])
     subprocess.call(["ifconfig", interface, "up"])
 
-
+#get current mac address
 def get_current_MAC(interface):
     ifconfig_output = subprocess.check_output(["ifconfig", interface])
     print(ifconfig_output.decode())
@@ -44,7 +38,7 @@ def get_current_MAC(interface):
     else:
         print("[-] Sorry, Unable to read MAC Address")
 
-
+#main function
 def main():
     if os.geteuid() != 0:
         print("[-] Please run this script as sudo or as root.")
