@@ -4,16 +4,14 @@ import sys
 import csv
 import json
 
-
+#terminal argument parser
 def get_arguments():
     """
     Parse and Validate command line arguments
     """
     parser = argparse.ArgumentParser()
-    parser.add_argument("-t", "--target", dest="target",
-                        help="Use this to specify the IP Address or range of IP Addresses. For example: 192.168.0.0 or 127.0.0.1/24")
-    parser.add_argument('-v', "--verbose", dest="verbose",
-                        help="Show additional information about scanning.")
+    parser.add_argument("-t", "--target", dest="target", help="Use this to specify the IP Address or range of IP Addresses. For example: 192.168.0.0 or 127.0.0.1/24")
+    parser.add_argument('-v', "--verbose", dest="verbose", action="store_true", help="Show additional information about scanning.")
     args = parser.parse_args()
     if not args.target:
         parser.error("[-] Please specify the IP Address.")
@@ -22,7 +20,7 @@ def get_arguments():
 
 options = get_arguments()
 
-
+#network scanner function
 def scan(ip):
     """
     Perform an ARP scan on provided IP address or range.
@@ -41,8 +39,7 @@ def scan(ip):
         print(f"[-] Error in Scanning: {e}")
         sys.exit(1)
 
-
-
+# save results to a file
 def save_results(results_list):
     save_choice = input(
         "Do you want save the results?(yes/no) > ").strip().lower()
@@ -73,12 +70,13 @@ def save_results(results_list):
         except Exception as e:
             print(f"Error while saving {e}")
     elif save_choice == "no":
-        print("[-] Results are here until you close the terminal.")
+        print("[-] The results above will remain visible until you close this terminal.")
         sys.exit()
     else:
-        print("[-] Invalid choice! Results are here until you close the terminal.")
-        sys.exit()
+        print(f"{RED}[!] Invalid option selected. The results above will remain visible until you close this terminal.{RESET}")
+        sys.exit(1)
 
+#print results on the screen
 def print_results(results_list):
     """
     Print the results of scan
