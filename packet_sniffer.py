@@ -6,10 +6,8 @@ import argparse
 
 def get_arguments():
     parser = argparse.ArgumentParser()
-    parser.add_argument("-i", "--interface", dest="interface",
-                        help="Use this to specify the interface. Example -i eth0")
-    parser.add_argument('-w', "--write", dest="log",
-                        help="Use this to save logs Example -w <file_name>")
+    parser.add_argument("-i", "--interface", dest="interface", help="Specify the network interface to use (e.g., -i eth0).")
+    parser.add_argument('-w', "--write", dest="log", help="Specify a file to save the output logs (e.g., -w results.txt).")
     args = parser.parse_args()
     if not args.interface:
         parser.error("[-] Please specify an interface.")
@@ -18,10 +16,8 @@ def get_arguments():
 
 options = get_arguments()
 
-
 def sniff(interface):
-    scapy.sniff(iface=interface, store=False,
-                filter="tcp", prn=process_sniffed_packet)
+    scapy.sniff(iface=interface, store=False, filter="tcp", prn=process_sniffed_packet)
 
 
 def get_url(packet):
@@ -48,8 +44,7 @@ def log_info(url, login, filename="logs"):
     with open(f"{filename}.txt", "a") as f:
         f.write(f"[URL] [{datetime.now().strftime('%H:%M:%S')}] {url}\n")
         if login:
-            f.write(
-                f"[LOGIN] [{datetime.now().strftime('%H:%M:%S')}] Possible Username/Password >> {login}")
+            f.write(f"[LOGIN] [{datetime.now().strftime('%H:%M:%S')}] Possible Username/Password >> {login}")
 
 
 def process_sniffed_packet(packet):
