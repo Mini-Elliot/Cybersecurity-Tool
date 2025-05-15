@@ -103,14 +103,29 @@ Intercepts DNS response packets and forges DNS answers (e.g., redirecting `www.b
 
 ---
 
+### 8. ⌨️ Keylogger (Educational)
+
+**Description:**  
+Logs all keystrokes and periodically sends the log to a configured email address.
+
+**Use Cases:**
+- Demonstrate how keylogging works  
+- Simulate credential theft in labs  
+- Understand key event monitoring
+
+> ⚠️ **Highly sensitive tool!** Only run in controlled, isolated environments where you have explicit authorization.
+
+---
+
 ## 🛠️ Requirements
 
 - Python 3.x
-- `scapy` – For network packet crafting and sniffing
-- `netfilterqueue` – For packet interception via iptables (Linux only)
-- Root/Administrator privileges (for ARP spoofing, file interceptor, DNS spoofing)
+- Administrator/root privileges (for certain tools)
+- Linux is recommended for full feature support (especially for packet interception tools)
 
-Install dependencies using:
+### 🧩 Python Modules
+
+Install dependencies using pip:
 
 ```bash
-pip install scapy netfilterqueue
+pip install scapy netfilterqueue pynput
