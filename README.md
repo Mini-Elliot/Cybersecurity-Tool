@@ -16,8 +16,8 @@ This repository is a collection of essential cybersecurity tools designed for **
 Spoofs (changes) your MAC address temporarily to anonymize your device on a network.
 
 **Use Cases:**
-- Bypass MAC-based network filters
-- Perform anonymity tests
+- Bypass MAC-based network filters  
+- Perform anonymity tests  
 - Reset DHCP leases
 
 ---
@@ -28,8 +28,8 @@ Spoofs (changes) your MAC address temporarily to anonymize your device on a netw
 Performs ARP spoofing by sending forged ARP responses to redirect traffic through your device (Man-in-the-Middle attack).
 
 **Use Cases:**
-- Intercept unencrypted traffic for analysis
-- Test IDS/IPS responses
+- Intercept unencrypted traffic for analysis  
+- Test IDS/IPS responses  
 - Evaluate network segmentation and trust boundaries
 
 > ✏️ Automatically enables/disables IP forwarding depending on your OS.
@@ -42,8 +42,8 @@ Performs ARP spoofing by sending forged ARP responses to redirect traffic throug
 Scans the local network for live hosts and retrieves their IP and MAC addresses.
 
 **Use Cases:**
-- Identify active devices in a subnet
-- Detect unauthorized devices on a network
+- Identify active devices in a subnet  
+- Detect unauthorized devices on a network  
 - Reconnaissance in authorized assessments
 
 ---
@@ -54,8 +54,8 @@ Scans the local network for live hosts and retrieves their IP and MAC addresses.
 Captures and analyzes raw packets on your network interface. Supports filtering by protocol (e.g., HTTP, DNS, ARP).
 
 **Use Cases:**
-- Monitor data transmission
-- Protocol analysis and debugging
+- Monitor data transmission  
+- Protocol analysis and debugging  
 - Educational exploration of low-level networking
 
 ---
@@ -67,21 +67,50 @@ A basic backdoor that establishes a reverse TCP connection to a listener for rem
 **Listener** waits for the incoming connection, then receives and sends commands to the backdoor.
 
 **Use Cases:**
-- Practice reverse shell mechanics
-- Simulate payload delivery in lab environments
+- Practice reverse shell mechanics  
+- Simulate payload delivery in lab environments  
 - Understand command-and-control (C2) basics
 
 > ⚠️ **This tool is extremely sensitive and dangerous if misused. Only run it in isolated environments under your full control.**
 
 ---
 
+### 6. 🧪 File Interceptor (HTTP File Replacement)
+
+**Description:**  
+Intercepts HTTP requests and responses to identify `.exe` download attempts and replaces them with a fake redirect (e.g., 301 to another file or URL).
+
+**Use Cases:**
+- Demonstrate HTTP response tampering  
+- Simulate file replacement in MiTM scenarios  
+- Test detection by endpoint or IDS/IPS systems
+
+> ⚠️ Requires root privileges and sets up `iptables` rules to redirect traffic via `NFQUEUE`.
+
+---
+
+### 7. 🌍 DNS Spoofer
+
+**Description:**  
+Intercepts DNS response packets and forges DNS answers (e.g., redirecting `www.bing.com` to a chosen IP address).
+
+**Use Cases:**
+- Practice DNS poisoning in lab environments  
+- Demonstrate DNS-based redirection attacks  
+- Evaluate DNS resolution vulnerabilities
+
+> ⚠️ Use only on test networks with devices you control. Automatically hooks into `iptables` to forward DNS packets via `NFQUEUE`.
+
+---
+
 ## 🛠️ Requirements
 
 - Python 3.x
-- `scapy` (for scanner, sniffer, ARP spoofing)
-- Root/Administrator privileges for some tools
+- `scapy` – For network packet crafting and sniffing
+- `netfilterqueue` – For packet interception via iptables (Linux only)
+- Root/Administrator privileges (for ARP spoofing, file interceptor, DNS spoofing)
 
 Install dependencies using:
 
 ```bash
-pip install scapy
+pip install scapy netfilterqueue
