@@ -4,7 +4,7 @@ This repository is a collection of essential cybersecurity tools designed for **
 
 > ⚠️ **WARNING:** These tools are strictly for **educational, ethical, and authorized use only**.  
 > Unauthorized use against systems or networks you do not own or have explicit permission to test is **illegal** and punishable under cybercrime laws.  
-> The developer is **not responsible** for any misuse or damage caused by these tools.
+> I am **not responsible** for any misuse or damage caused by these tools.
 
 ---
 
