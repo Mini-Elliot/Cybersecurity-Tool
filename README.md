@@ -1,6 +1,6 @@
 # 🛡️ CyberSecurity Toolkit - Educational Offensive Security Tools
 
-This repository is a collection of essential cybersecurity tools designed for **educational use**, **network auditing**, and **authorized penetration testing**. These tools provide low-level access to network behavior and are widely used in ethical hacking practices.
+This repository is a collection of some basic essential cybersecurity tools designed for **educational use**, **network auditing**, and **authorized penetration testing**. These tools provide low-level access to network behavior and are widely used in ethical hacking practices.
 
 > ⚠️ **WARNING:** These tools are strictly for **educational, ethical, and authorized use only**.  
 > Unauthorized use against systems or networks you do not own or have explicit permission to test is **illegal** and punishable under cybercrime laws.  
