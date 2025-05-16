@@ -70,6 +70,7 @@ A basic backdoor that establishes a reverse TCP connection to a listener for rem
 - Practice reverse shell mechanics  
 - Simulate payload delivery in lab environments  
 - Understand command-and-control (C2) basics
+- Persistent
 
 > ⚠️ **This tool is extremely sensitive and dangerous if misused. Only run it in isolated environments under your full control.**
 
